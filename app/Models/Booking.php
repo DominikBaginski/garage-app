@@ -33,4 +33,10 @@ class Booking extends Model
     {
         return $this->belongsTo(Garage::class);
     }
+    
+    public function getGarageNameAttribute()
+    {
+        return $this->garage->name;
+    }
+
 }

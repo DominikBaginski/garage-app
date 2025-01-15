@@ -20,7 +20,7 @@
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
                         <tr v-for="booking in bookings" :key="booking.id">
-                            <td class="px-6 py-4 whitespace-nowrap">{{ booking.garage?.name }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap">{{ booking.garage_name }}</td>
                             <td class="px-6 py-4 whitespace-nowrap">{{ formatDate(booking.start_time) }}</td>
                             <td class="px-6 py-4 whitespace-nowrap">{{ formatDate(booking.end_time) }}</td>
                             <td class="px-6 py-4 whitespace-nowrap">
