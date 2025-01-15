@@ -16,19 +16,19 @@
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
                     <h3 class="text-lg font-semibold text-gray-900">Total Garages</h3>
                     <p class="mt-2 text-3xl font-bold text-blue-600">{{ stats.totalGarages }}</p>
-                    <p class="text-sm text-gray-500">{{ stats.availableGarages }} available</p>
+                    <p class="text-sm text-gray-500">{{ stats.total_garages }} available</p>
                 </div>
                 
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
                     <h3 class="text-lg font-semibold text-gray-900">Active Bookings</h3>
                     <p class="mt-2 text-3xl font-bold text-green-600">{{ stats.activeBookings }}</p>
-                    <p class="text-sm text-gray-500">{{ stats.pendingBookings }} pending</p>
+                    <p class="text-sm text-gray-500">{{ stats.active_bookings }}</p>
                 </div>
                 
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
                     <h3 class="text-lg font-semibold text-gray-900">Today's Bookings</h3>
                     <p class="mt-2 text-3xl font-bold text-purple-600">{{ stats.todayBookings }}</p>
-                    <p class="text-sm text-gray-500">{{ stats.upcomingBookings }} upcoming</p>
+                    <p class="text-sm text-gray-500">{{ stats.upcomingBookings }} upcoming (to do)</p>
                 </div>
             </div>
 
@@ -36,11 +36,11 @@
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6">
                     <h2 class="text-2xl font-semibold text-gray-800 mb-4">Recent Activity</h2>
-                    <div v-if="recentBookings.length === 0" class="text-center py-4 text-gray-500">
+                    <div v-if="stats.recent_bookings.length === 0" class="text-center py-4 text-gray-500">
                         No recent bookings found
                     </div>
                     <div v-else class="space-y-4">
-                        <div v-for="booking in recentBookings" :key="booking.id" class="flex items-center justify-between border-b pb-4">
+                        <div v-for="booking in stats.recent_bookings" :key="booking.id" class="flex items-center justify-between border-b pb-4">
                             <div>
                                 <p class="font-medium text-gray-900">{{ booking.garage?.name }}</p>
                                 <p class="text-sm text-gray-500">{{ formatDate(booking.start_time) }} - {{ formatDate(booking.end_time) }}</p>
@@ -65,39 +65,17 @@
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
 
-const stats = ref({
-    totalGarages: 0,
-    availableGarages: 0,
-    activeBookings: 0,
-    pendingBookings: 0,
-    todayBookings: 0,
-    upcomingBookings: 0
-});
-
-const recentBookings = ref([]);
+const stats = ref([]);
 const loading = ref(true);
 const error = ref(null);
 
 const fetchStats = async () => {
     try {
-        loading.value = true;
-        error.value = null;
-        
-        console.log('Fetching dashboard stats...');
-        const response = await axios.get('/dashboard');
-        console.log('Dashboard response:', response.data);
-        
-        if (response.data && response.data.stats) {
-            stats.value = response.data.stats;
-            recentBookings.value = response.data.recentBookings || [];
-        } else {
-            throw new Error('Invalid response format from API');
-        }
-    } catch (err) {
-        console.error('Error fetching dashboard data:', err);
-        error.value = err.response?.data?.message || 'Failed to load dashboard data. Please try again later.';
-    } finally {
+        const response = await axios.get('/api/dashboard');
+        stats.value = response.data.data;
         loading.value = false;
+    } catch (error) {
+        console.error('Error fetching bookings:', error);
     }
 };
 
@@ -112,7 +90,6 @@ const formatDate = (dateString) => {
 };
 
 onMounted(() => {
-    console.log('Dashboard component mounted');
     fetchStats();
 });
 </script>
